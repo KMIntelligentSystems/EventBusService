@@ -17,39 +17,12 @@ class EventBusService {
   private connectedServices = new Map<string, { socket: any; serviceType: string }>();
 
   constructor() {
-    const server = createServer((req, res) => {
-      // Health check endpoint for Railway
-      if (req.url === '/health' || req.url === '/') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          status: 'ok',
-          service: 'event-bus',
-          connectedServices: this.connectedServices.size
-        }));
-      } else {
-        res.writeHead(404);
-        res.end();
-      }
-    });
-
-    // Configure allowed origins for Railway
-    const allowedOrigins = [
-      'https://kmintelligentsystems-stategraph-react-production-a7ce.up.railway.app',
-      'http://eventbusservice.railway.internal:8080',
-      'https://eventbusservice-production.up.railway.app',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002'
-    ];
-
+    const server = createServer();
     this.io = new SocketIOServer(server, {
       cors: {
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || allowedOrigins,
-        credentials: true,
-        methods: ["GET", "POST"]
-      },
-      transports: ['polling', 'websocket'],
-      allowEIO3: true
+        origin: process.env.ALLOWED_ORIGINS?.split(',') || "*",
+        credentials: true
+      }
     });
 
     this.setupEventRouting();
