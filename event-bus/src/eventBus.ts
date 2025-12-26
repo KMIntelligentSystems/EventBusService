@@ -17,7 +17,21 @@ class EventBusService {
   private connectedServices = new Map<string, { socket: any; serviceType: string }>();
 
   constructor() {
-    const server = createServer();
+    const server = createServer((req, res) => {
+      // Health check endpoint for Railway
+      if (req.url === '/health' || req.url === '/') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          status: 'ok',
+          service: 'event-bus',
+          connectedServices: this.connectedServices.size
+        }));
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
+    });
+
     this.io = new SocketIOServer(server, {
       cors: {
         origin: process.env.ALLOWED_ORIGINS?.split(',') || "*",
