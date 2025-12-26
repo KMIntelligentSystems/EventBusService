@@ -32,9 +32,19 @@ class EventBusService {
       }
     });
 
+    // Configure allowed origins for Railway
+    const allowedOrigins = [
+      'https://kmintelligentsystems-stategraph-react-production-a7ce.up.railway.app',
+      'http://eventbusservice.railway.internal:8080',
+      'https://eventbusservice-production.up.railway.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002'
+    ];
+
     this.io = new SocketIOServer(server, {
       cors: {
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || "*",
+        origin: process.env.ALLOWED_ORIGINS?.split(',') || allowedOrigins,
         credentials: true
       }
     });
