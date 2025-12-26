@@ -45,8 +45,11 @@ class EventBusService {
     this.io = new SocketIOServer(server, {
       cors: {
         origin: process.env.ALLOWED_ORIGINS?.split(',') || allowedOrigins,
-        credentials: true
-      }
+        credentials: true,
+        methods: ["GET", "POST"]
+      },
+      transports: ['polling', 'websocket'],
+      allowEIO3: true
     });
 
     this.setupEventRouting();
