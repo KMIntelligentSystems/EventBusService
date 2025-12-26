@@ -17,7 +17,22 @@ class EventBusService {
   private connectedServices = new Map<string, { socket: any; serviceType: string }>();
 
   constructor() {
-    const server = createServer();
+    const server = createServer((req, res) => {
+      // Health check endpoint for Railway
+      if (req.url === '/health' || req.url === '/') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          status: 'ok',
+          service: 'event-bus',
+          connectedServices: this.connectedServices.size,
+          uptime: process.uptime()
+        }));
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
+    });
+
     this.io = new SocketIOServer(server, {
       cors: {
         origin: process.env.ALLOWED_ORIGINS?.split(',') || "*",
@@ -29,6 +44,19 @@ class EventBusService {
     const port = parseInt(process.env.PORT || '3003', 10);
     server.listen(port, '0.0.0.0', () => {
       console.log(`Event Bus running on port ${port}`);
+    });
+
+    // Error handling
+    server.on('error', (error) => {
+      console.error('Server error:', error);
+    });
+
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught exception:', error);
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled rejection at:', promise, 'reason:', reason);
     });
   }
 
