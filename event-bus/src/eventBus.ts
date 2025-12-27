@@ -27,8 +27,7 @@ class EventBusService {
         'http://127.0.0.1:3000',
         'http://127.0.0.1:3001',
         'http://127.0.0.1:3002',
-        'https://kmintelligentsystems-stategraph-react-production-a7ce.up.railway.app',
-        'https://kmintelligentsystems-stategraph-react-production-1f93.up.railway.app'
+        'https://kmintelligentsystems-stategraph-react-production-1a01.up.railway.app'
       ];
 
       if (origin && allowedOrigins.includes(origin)) {
