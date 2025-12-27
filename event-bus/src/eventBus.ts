@@ -19,6 +19,7 @@ class EventBusService {
   constructor() {
     const server = createServer((req, res) => {
       // Add CORS headers to all HTTP requests (including Socket.io polling)
+      // Make sure to add cors
       const origin = req.headers.origin;
       const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
         'http://localhost:3000',
