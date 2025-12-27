@@ -18,6 +18,33 @@ class EventBusService {
 
   constructor() {
     const server = createServer((req, res) => {
+      // Add CORS headers to all HTTP requests (including Socket.io polling)
+      const origin = req.headers.origin;
+      const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001',
+        'http://127.0.0.1:3002',
+        'https://kmintelligentsystems-stategraph-react-production-a7ce.up.railway.app',
+        'https://kmintelligentsystems-stategraph-react-production-1f93.up.railway.app'
+      ];
+
+      if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+
+      // Handle preflight requests
+      if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+      }
+
       // Health check endpoint for Railway
       if (req.url === '/health' || req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
