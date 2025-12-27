@@ -33,11 +33,24 @@ class EventBusService {
       }
     });
 
+    // Configure CORS for both local and Railway environments
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001',
+      'http://127.0.0.1:3002',
+      'https://kmintelligentsystems-stategraph-react-production-a7ce.up.railway.app'
+    ];
+
     this.io = new SocketIOServer(server, {
       cors: {
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || "*",
+        origin: allowedOrigins,
+        methods: ['GET', 'POST'],
         credentials: true
-      }
+      },
+      transports: ['polling', 'websocket']
     });
 
     this.setupEventRouting();
