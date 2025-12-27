@@ -34,7 +34,7 @@ class EventBusService {
     });
 
     // Configure CORS for both local and Railway environments
-    //Another comment
+    //Another comment to trigger rail
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
       'http://localhost:3000',
       'http://localhost:3001',
